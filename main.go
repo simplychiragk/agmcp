@@ -21,6 +21,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage: %s <command> [arguments]\n\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Commands:\n")
 		fmt.Fprintf(os.Stderr, "  add    Add or update an MCP server configuration\n")
+		fmt.Fprintf(os.Stderr, "  remove Remove an MCP server configuration\n")
+		fmt.Fprintf(os.Stderr, "  list   List all registered MCP servers\n")
 		os.Exit(1)
 	}
 
@@ -32,6 +34,10 @@ func main() {
 	switch cmd {
 	case "add":
 		handleAdd()
+	case "remove":
+		handleRemove()
+	case "list":
+		handleList()
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n\n", cmd)
 		flag.Usage()
@@ -98,6 +104,66 @@ func handleAdd() {
 			os.Exit(1)
 		}
 		fmt.Printf("Successfully added MCP server %q with command %q and args %v\n", serverName, command, cmdArgs)
+	}
+}
+
+func handleRemove() {
+	removeCmd := flag.NewFlagSet("remove", flag.ExitOnError)
+	removeCmd.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s remove <server-name>\n\n", os.Args[0])
+		os.Exit(1)
+	}
+
+	if err := removeCmd.Parse(os.Args[2:]); err != nil {
+		fmt.Fprintf(os.Stderr, "Error parsing flags: %v\n", err)
+		os.Exit(1)
+	}
+
+	args := removeCmd.Args()
+	if len(args) < 1 {
+		fmt.Fprintf(os.Stderr, "Error: remove command requires a server name.\n")
+		removeCmd.Usage()
+	}
+
+	serverName := args[0]
+	err := removeConfig(serverName)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error removing config: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("Successfully removed MCP server %q\n", serverName)
+}
+
+func handleList() {
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	listCmd.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s list\n\n", os.Args[0])
+		os.Exit(1)
+	}
+
+	if err := listCmd.Parse(os.Args[2:]); err != nil {
+		fmt.Fprintf(os.Stderr, "Error parsing flags: %v\n", err)
+		os.Exit(1)
+	}
+
+	servers, err := listConfigs()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error listing configs: %v\n", err)
+		os.Exit(1)
+	}
+
+	if len(servers) == 0 {
+		fmt.Println("No registered MCP servers found.")
+		return
+	}
+
+	fmt.Println("Registered MCP Servers:")
+	for name, details := range servers {
+		if details.ServerURL != "" {
+			fmt.Printf("  - %s (remote): URL = %s\n", name, details.ServerURL)
+		} else {
+			fmt.Printf("  - %s: Command = %s %v\n", name, details.Command, details.Args)
+		}
 	}
 }
 
@@ -169,4 +235,102 @@ func updateConfig(name string, newServer MCPServer) error {
 	}
 
 	return nil
+}
+
+func removeConfig(name string) error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("unable to resolve user home directory: %w", err)
+	}
+
+	configDir := filepath.Join(home, ".gemini", "antigravity-cli")
+	configPath := filepath.Join(configDir, "mcp_config.json")
+
+	// Read existing config into a generic map
+	config := make(map[string]interface{})
+
+	file, err := os.Open(configPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("configuration file does not exist at %s", configPath)
+		}
+		return fmt.Errorf("failed to open config file: %w", err)
+	}
+
+	dec := json.NewDecoder(file)
+	if err := dec.Decode(&config); err != nil && err != io.EOF {
+		file.Close()
+		return fmt.Errorf("failed to parse config file: %w", err)
+	}
+	file.Close()
+
+	// Extract mcpServers
+	var mcpServers map[string]interface{}
+	if val, ok := config["mcpServers"]; ok {
+		if m, ok := val.(map[string]interface{}); ok {
+			mcpServers = m
+		}
+	}
+
+	if mcpServers == nil {
+		return fmt.Errorf("no MCP servers found in configuration")
+	}
+
+	// Check if server exists
+	if _, ok := mcpServers[name]; !ok {
+		return fmt.Errorf("MCP server %q does not exist in configuration", name)
+	}
+
+	// Delete from map
+	delete(mcpServers, name)
+	config["mcpServers"] = mcpServers
+
+	// Write back configuration
+	outFile, err := os.OpenFile(configPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to open config file for writing: %w", err)
+	}
+	defer outFile.Close()
+
+	enc := json.NewEncoder(outFile)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(config); err != nil {
+		return fmt.Errorf("failed to encode configuration JSON: %w", err)
+	}
+
+	return nil
+}
+
+func listConfigs() (map[string]MCPServer, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("unable to resolve user home directory: %w", err)
+	}
+
+	configDir := filepath.Join(home, ".gemini", "antigravity-cli")
+	configPath := filepath.Join(configDir, "mcp_config.json")
+
+	file, err := os.Open(configPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil // No file = no servers registered
+		}
+		return nil, fmt.Errorf("failed to open config file: %w", err)
+	}
+	defer file.Close()
+
+	// Decode into standard MCPConfig struct to ensure it maps correctly
+	var config struct {
+		MCPServers map[string]MCPServer `json:"mcpServers"`
+	}
+
+	dec := json.NewDecoder(file)
+	if err := dec.Decode(&config); err != nil {
+		if err == io.EOF {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("failed to parse config file: %w", err)
+	}
+
+	return config.MCPServers, nil
 }
