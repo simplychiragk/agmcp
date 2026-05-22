@@ -1,73 +1,76 @@
-# agmcp — Antigravity MCP Manager
+<h1 align="center">⚡ agmcp ⚡</h1>
 
-`agmcp` is a zero-dependency command-line interface (CLI) tool designed for Windows to automate and manage Model Context Protocol (MCP) server installations for the Antigravity CLI. 
+<p align="center">
+  <strong>The Ultimate Zero-Dependency MCP Manager for the Antigravity CLI</strong>
+</p>
 
-It acts as a configuration bridge, letting you easily register both local command-based and remote SSE-based MCP servers into the Antigravity configuration file (`%USERPROFILE%\.gemini\antigravity-cli\mcp_config.json`).
+<p align="center">
+  <img src="agmcp.gif" alt="agmcp demo" width="680" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+</p>
+
+<p align="center">
+  <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge" alt="License" /></a>
+  <img src="https://img.shields.io/badge/OS-Windows%20%7C%20Linux%20%7C%20macOS-2196F3?style=for-the-badge" alt="OS Support" />
+  <a href="https://github.com/yourusername/agmcp/pulls"><img src="https://img.shields.io/badge/PRs-welcome-ff69b4?style=for-the-badge" alt="PRs Welcome" /></a>
+</p>
 
 ---
 
-## Why `agmcp`?
+## 🪝 The Hook: Manual Configs are a Nightmare
 
-When migrating from **Claude Code** or other Gemini CLI environments, configuring MCP servers can be friction-prone on Windows. Hand-editing JSON configurations frequently leads to syntax issues, incorrect paths, and broken formatting.
+Windows users migrating to the **Antigravity CLI** from Claude Code or the Gemini CLI often hit a wall when setting up MCP servers:
 
-`agmcp` eliminates this friction by:
-- Resolving home directory and path boundaries automatically.
-- Safely reading, parsing, merging, and writing configuration files without discarding unrelated top-level settings.
-- Supporting modern, remote SSE configurations using the `serverUrl` field instead of deprecated `url` keys.
+* 😣 **Syntax Nightmares:** Editing hidden, deeply nested `mcp_config.json` files by hand inevitably leads to broken commas and invalid JSON.
+* 🔍 **Path Hunting:** Finding and resolving `%USERPROFILE%` correctly across shells and environments is error-prone.
+* ⚠️ **Schema Drift:** Keeping track of when to use `command`/`args` versus migrating to modern SSE-based remote `serverUrl` options.
+
+**Enter `agmcp`.** A single compiled, zero-dependency binary that safely manages your MCP configurations directly from the CLI. Run one command, and your MCP server is instantly registered, formatted, and ready for action.
 
 ---
 
-## Installation & Compilation
+## ⚡ Quick Start
 
-Since `agmcp` is written in Go with zero external dependencies, you can compile it directly into a single self-contained executable on your system.
+Get up and running in seconds. No node modules, no dependencies, just raw performance.
 
-### Build from Source
-Ensure you have [Go](https://go.dev/) installed, then run:
-
+### Install & Build
 ```bash
+# Clone the repository and build the binary
+git clone https://github.com/yourusername/agmcp.git
+cd agmcp
 go build -o agmcp.exe main.go
 ```
 
----
+### Adding an MCP Server (e.g., GitHub MCP)
 
-## Usage
+#### 💻 PowerShell
+```powershell
+.\agmcp.exe add github-server npx -y @modelcontextprotocol/server-github
+```
 
-### 1. Add/Update a Local Command-based Server
-To register a local command-based MCP server (e.g., the Postgres server running via `npx`):
-
+#### 🐧 Bash (Linux / macOS)
 ```bash
-.\agmcp.exe add my-test-server npx @modelcontextprotocol/server-postgres
+./agmcp add github-server npx -y @modelcontextprotocol/server-github
 ```
 
-This will inject or update the configuration block:
-```json
-"my-test-server": {
-  "command": "npx",
-  "args": [
-    "@modelcontextprotocol/server-postgres"
-  ]
-}
-```
-
-### 2. Add/Update a Remote SSE Server
-To register a remote SSE-based MCP server using the `--remote` flag:
-
+### Adding a Remote SSE Server
 ```bash
-.\agmcp.exe add --remote my-remote-server https://example.com/sse
-```
-
-This will inject or update the configuration block using the correct, non-deprecated key:
-```json
-"my-remote-server": {
-  "serverUrl": "https://example.com/sse"
-}
+./agmcp add --remote remote-prod https://mcp.yourdomain.com/sse
 ```
 
 ---
 
-## Configuration Location
-On Windows, `agmcp` modifies your configuration at:
-```
-%USERPROFILE%\.gemini\antigravity-cli\mcp_config.json
-```
-All edits preserve any existing configuration settings in that file.
+## ✨ Features
+
+* 🚀 **Zero Dependencies:** Single static binary with zero external runtime requirements.
+* 📂 **Path Safety:** Automatic resolution of Windows profile paths using native OS bindings.
+* 🛡️ **Preservative Formatting:** Safely parses, updates, and pretty-prints your `%USERPROFILE%\.gemini\antigravity-cli\mcp_config.json` without wiping other configuration settings.
+* 🌐 **Remote Native:** Modern support for the latest remote SSE protocols using the standard `serverUrl` schema (no more deprecated `url` keys!).
+
+---
+
+## 🌟 Show Your Support
+
+If `agmcp` saved you from configuration headaches, please consider **starring the repository**! ⭐
+
+Got features you want to see? Found a bug? Open an issue on our [GitHub Issues](https://github.com/yourusername/agmcp/issues) tab! Contributions, ideas, and PRs are always welcome. Let's make MCP configuration completely painless.
