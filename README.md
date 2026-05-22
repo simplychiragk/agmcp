@@ -1,11 +1,11 @@
-<h1 align="center">⚡ agmcp ⚡</h1>
+<h1 align="center">agmcp: Model Context Protocol Manager for Antigravity CLI</h1>
 
 <p align="center">
   <strong>The Ultimate Zero-Dependency MCP Manager for the Antigravity CLI</strong>
 </p>
 
 <p align="center">
-  <img src="agmcp.gif" alt="agmcp demo" width="680" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+  <img src="assets/agmcp.gif" alt="agmcp demo" width="680" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
 </p>
 
 <p align="center">
@@ -16,6 +16,8 @@
 </p>
 
 ---
+
+`agmcp` is a zero-dependency command-line utility built in Go that automates the installation and configuration of Model Context Protocol (MCP) servers for the Google Antigravity CLI. It replaces manual JSON editing with a single command.
 
 ## 📦 Installation
 
@@ -54,13 +56,9 @@ Windows users migrating to the **Antigravity CLI** from Claude Code or the Gemin
 
 Get up and running in seconds. No node modules, no dependencies, just raw performance.
 
-### Install & Build from Source
-```bash
-# Clone the repository and build the binary
-git clone https://github.com/simplychiragk/agmcp.git
-cd agmcp
-go build -o agmcp.exe main.go
-```
+---
+
+## 🚀 Usage
 
 ### Adding an MCP Server (e.g., GitHub MCP)
 
@@ -95,3 +93,21 @@ go build -o agmcp.exe main.go
 If `agmcp` saved you from configuration headaches, please consider **starring the repository**! ⭐
 
 Got features you want to see? Found a bug? Open an issue on our [GitHub Issues](https://github.com/simplychiragk/agmcp/issues) tab! Contributions, ideas, and PRs are always welcome. Let's make MCP configuration completely painless.
+
+---
+
+## 🛠️ Local Development
+
+### Install & Build from Source
+```bash
+# Clone the repository and build the binary
+git clone https://github.com/simplychiragk/agmcp.git
+cd agmcp
+go build -o agmcp.exe main.go
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
