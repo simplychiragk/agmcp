@@ -52,29 +52,33 @@ Windows users migrating to the **Antigravity CLI** from Claude Code or the Gemin
 
 ---
 
-## ⚡ Quick Start
-
-Get up and running in seconds. No node modules, no dependencies, just raw performance.
-
----
-
 ## 🚀 Usage
 
 ### Adding an MCP Server (e.g., GitHub MCP)
 
-#### 💻 PowerShell
-```powershell
-.\agmcp.exe add github-server npx -y @modelcontextprotocol/server-github
+#### 💻 PowerShell / Command Prompt
+```cmd
+agmcp add github-server npx -y @modelcontextprotocol/server-github
 ```
 
 #### 🐧 Bash (Linux / macOS)
 ```bash
-./agmcp add github-server npx -y @modelcontextprotocol/server-github
+agmcp add github-server npx -y @modelcontextprotocol/server-github
 ```
 
 ### Adding a Remote SSE Server
 ```bash
-./agmcp add --remote remote-prod https://mcp.yourdomain.com/sse
+agmcp add --remote remote-prod https://mcp.yourdomain.com/sse
+```
+
+### Listing Active Servers
+```bash
+agmcp list
+```
+
+### Removing an MCP Server
+```bash
+agmcp remove <server-name>
 ```
 
 ---
