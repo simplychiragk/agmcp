@@ -12,8 +12,29 @@
   <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge" alt="License" /></a>
   <img src="https://img.shields.io/badge/OS-Windows%20%7C%20Linux%20%7C%20macOS-2196F3?style=for-the-badge" alt="OS Support" />
-  <a href="https://github.com/yourusername/agmcp/pulls"><img src="https://img.shields.io/badge/PRs-welcome-ff69b4?style=for-the-badge" alt="PRs Welcome" /></a>
+  <a href="https://github.com/simplychiragk/agmcp/pulls"><img src="https://img.shields.io/badge/PRs-welcome-ff69b4?style=for-the-badge" alt="PRs Welcome" /></a>
 </p>
+
+---
+
+## 📦 Installation
+
+Install `agmcp` with a single command:
+
+#### Linux / macOS
+```bash
+curl -fsSL https://raw.githubusercontent.com/simplychiragk/agmcp/main/install.sh | bash
+```
+
+#### Windows (PowerShell)
+```powershell
+irm https://raw.githubusercontent.com/simplychiragk/agmcp/main/install.ps1 | iex
+```
+
+#### Windows (CMD)
+```cmd
+curl -fsSL https://raw.githubusercontent.com/simplychiragk/agmcp/main/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
 
 ---
 
@@ -33,10 +54,10 @@ Windows users migrating to the **Antigravity CLI** from Claude Code or the Gemin
 
 Get up and running in seconds. No node modules, no dependencies, just raw performance.
 
-### Install & Build
+### Install & Build from Source
 ```bash
 # Clone the repository and build the binary
-git clone https://github.com/yourusername/agmcp.git
+git clone https://github.com/simplychiragk/agmcp.git
 cd agmcp
 go build -o agmcp.exe main.go
 ```
@@ -73,4 +94,4 @@ go build -o agmcp.exe main.go
 
 If `agmcp` saved you from configuration headaches, please consider **starring the repository**! ⭐
 
-Got features you want to see? Found a bug? Open an issue on our [GitHub Issues](https://github.com/yourusername/agmcp/issues) tab! Contributions, ideas, and PRs are always welcome. Let's make MCP configuration completely painless.
+Got features you want to see? Found a bug? Open an issue on our [GitHub Issues](https://github.com/simplychiragk/agmcp/issues) tab! Contributions, ideas, and PRs are always welcome. Let's make MCP configuration completely painless.
